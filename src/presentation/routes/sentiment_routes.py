@@ -15,7 +15,7 @@ class SentimentRequest(BaseModel):
         str_strip_whitespace = True
     
 @router.post("/")
-def analyze_sentiment(request: SentimentRequest):
+async def analyze_sentiment(request: SentimentRequest):
     sentiment = request.text
     result = use_case.execute(sentiment)
     return {"label": result.label, "score": result.score}

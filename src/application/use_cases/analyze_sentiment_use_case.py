@@ -13,8 +13,8 @@ class AnalyzeSentimentUseCase:
         self.metrics = metrics
         
     def execute(self, sentiment: str) -> SentimentResult:
-        start_time = time.time()
-            
+        start_time = time.perf_counter()
+
         try:
             result = self.analyzer.analyze(sentiment)
             self.metrics.increment_request(result.label)
@@ -23,7 +23,7 @@ class AnalyzeSentimentUseCase:
         except Exception as error:
             self.metrics.increment_error()
             raise error
-        
+
         finally:
-            duration = (time.time() - start_time) * 1000
+            duration = time.perf_counter() - start_time
             self.metrics.observe_processing_time(duration)
