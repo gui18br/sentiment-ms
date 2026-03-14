@@ -14,6 +14,7 @@ class AnalyzeSentimentUseCase:
         
     def execute(self, sentiment: str) -> SentimentResult:
         start_time = time.perf_counter()
+        start_cpu = time.process_time()
 
         try:
             result = self.analyzer.analyze(sentiment)
@@ -26,4 +27,7 @@ class AnalyzeSentimentUseCase:
 
         finally:
             duration = time.perf_counter() - start_time
+            cpu_time = time.process_time() - start_cpu
+
             self.metrics.observe_processing_time(duration)
+            self.metrics.observe_cpu_usage(cpu_time)

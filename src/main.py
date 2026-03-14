@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from src.presentation.routes.sentiment_routes import router
 from src.presentation.routes.metrics_router import routerAPI 
-import src.metrics
 
 app = FastAPI(
         title="Sentiment Analysis MS", 
