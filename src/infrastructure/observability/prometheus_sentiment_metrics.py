@@ -1,36 +1,49 @@
-from prometheus_client import Counter, Histogram
+from prometheus_client import Counter, Histogram, REGISTRY
+from prometheus_client.metrics import MetricWrapperBase
 from src.application.ports.sentiment_metrics_port import SentimentMetricsPort
 from src.domain.enums.sentiment_label import SentimentLabel
 
 
-REQUESTS_TOTAL = Counter(
+def _get_or_create(metric_type, name, *args, **kwargs) -> MetricWrapperBase:
+    collector = REGISTRY._names_to_collectors.get(name)
+    if collector:
+        return collector
+    return metric_type(name, *args, **kwargs)
+
+
+REQUESTS_TOTAL = _get_or_create(
+    Counter,
     "sentiment_ms_requests_total",
     "Total de análises de sentimento",
     ["result", "service"],
 )
 
-PROCESSING_DURATION = Histogram(
+PROCESSING_DURATION = _get_or_create(
+    Histogram,
     "sentiment_ms_processing_duration_seconds",
     "Tempo de processamento do módulo sentiment",
     ["service"],
     buckets=[0.1, 0.3, 0.5, 1, 2, 3, 5],
 )
 
-CPU_USAGE = Histogram(
+CPU_USAGE = _get_or_create(
+    Histogram,
     "sentiment_ms_cpu_usage_seconds",
     "CPU usada por análise de sentimento",
     ["service"],
     buckets=[0.001, 0.005, 0.01, 0.05, 0.1],
 )
 
-HEAP_USAGE = Histogram(
+HEAP_USAGE = _get_or_create(
+    Histogram,
     "sentiment_ms_heap_used_bytes",
     "Heap consumido por análise",
     ["service"],
     buckets=[1024, 10000, 50000, 100000, 500000],
 )
 
-RSS_USAGE = Histogram(
+RSS_USAGE = _get_or_create(
+    Histogram,
     "sentiment_ms_rss_used_bytes",
     "RSS delta por análise",
     ["service"],
@@ -54,10 +67,10 @@ class PrometheusSentimentMetrics(SentimentMetricsPort):
             service=self.service_name
         ).inc()
 
-    def observe_processing_time(self, duration_ms: float) -> None:
+    def observe_processing_time(self, duration_seconds: float) -> None:
         PROCESSING_DURATION.labels(
             service=self.service_name
-        ).observe(duration_ms / 1000)
+        ).observe(duration_seconds)
 
     def observe_heap_usage(self, bytes_used: int) -> None:
         HEAP_USAGE.labels(
