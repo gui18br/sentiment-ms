@@ -5,8 +5,6 @@ WORKDIR /app
 ENV PYTHONUNBUFFERED=1
 ENV PROMETHEUS_MULTIPROC_DIR=/tmp/prometheus
 
-RUN mkdir -p /tmp/prometheus
-
 COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
