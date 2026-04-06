@@ -4,3 +4,4 @@ pydantic
 prometheus-client
 gunicorn
 psutil
+pysentimiento

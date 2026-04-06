@@ -9,14 +9,18 @@ from fastapi import FastAPI
 from src.presentation.routes.sentiment_routes import router
 from src.presentation.routes.metrics_router import routerAPI
 from src.infrastructure.metrics.memory_collector import MemoryCollector
+from src.infrastructure.metrics.gpu_collector import GpuCollector
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    collector = MemoryCollector(interval_seconds=15.0)
-    collector.start()  # inicia no worker que subiu
+    memory_collector = MemoryCollector(interval_seconds=15.0)
+    gpu_collector = GpuCollector(interval_seconds=15.0)
+    memory_collector.start()
+    gpu_collector.start()
     yield
-    collector.stop()
+    memory_collector.stop()
+    gpu_collector.stop()
 
 
 app = FastAPI(

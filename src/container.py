@@ -1,8 +1,8 @@
 from src.application.use_cases.analyze_sentiment_use_case import AnalyzeSentimentUseCase
-from src.infrastructure.advanced_sentiment_analyzer import AdvancedSentimentAnalyzer
+from src.infrastructure.pysentimiento_analyzer import PySentimientoAnalyzer
 from src.infrastructure.observability.prometheus_sentiment_metrics import PrometheusSentimentMetrics
 
-_analyzer = AdvancedSentimentAnalyzer()
+_analyzer = PySentimientoAnalyzer()
 _metrics = PrometheusSentimentMetrics(service_name="sentiment-ms")
 
 def build_analyze_sentiment_use_case():
